@@ -40,8 +40,8 @@ function App() {
         <div className="badge">Australia · Shark Intelligence</div>
         <h1>Shark Attacks in Australia Explained by AI</h1>
         <p>
-          Ask questions about incidents, injuries, states, activities, and
-          shark species. Answers are generated from the dataset.
+          Ask questions about incidents, injuries, states, activities, and shark species. 
+          Answers are generated from Australian Shark Attack dataset (1900 to 2026, GSAF data).
         </p>
       </header>
 
