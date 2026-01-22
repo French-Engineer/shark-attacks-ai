@@ -1,0 +1,40 @@
+@import url("https://fonts.googleapis.com/css2?family=Newsreader:wght@400;600&family=Space+Grotesk:wght@400;600;700&display=swap");
+
+:root {
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  color: #0b1f2a;
+  background-color: #f7f2ea;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --ink: #0b1f2a;
+  --ocean: #0e4c64;
+  --reef: #1f7a7a;
+  --sand: #f7f2ea;
+  --foam: #f0f7f6;
+  --sun: #f4b266;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: radial-gradient(circle at top left, #e7f2f0 0%, transparent 45%),
+    radial-gradient(circle at 80% 20%, #f9e7d0 0%, transparent 45%),
+    linear-gradient(160deg, #f7f2ea 0%, #e9f1f1 100%);
+  color: var(--ink);
+}
+
+a {
+  color: inherit;
+}
