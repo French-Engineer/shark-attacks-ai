@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from backend.agent_core import build_agent, load_data_if_available
+from agent_core import build_agent, load_data_if_available
 
 app = FastAPI()
 AGENT = build_agent()
