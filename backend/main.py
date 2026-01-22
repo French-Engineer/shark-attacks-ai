@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -7,9 +7,26 @@ from agent_core import build_agent, load_data_if_available
 app = FastAPI()
 AGENT = build_agent()
 
+@app.middleware("http")
+async def add_cors_headers(request: Request, call_next):
+    response: Response = await call_next(request)
+    response.headers.setdefault(
+        "Access-Control-Allow-Origin",
+        "https://main.d13s0xvafu5qv7.amplifyapp.com",
+    )
+    response.headers.setdefault(
+        "Access-Control-Allow-Methods",
+        "GET,POST,OPTIONS",
+    )
+    response.headers.setdefault(
+        "Access-Control-Allow-Headers",
+        "Content-Type,Authorization",
+    )
+    return response
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://main.d13s0xvafu5qv7.amplifyapp.com"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -42,3 +59,8 @@ def startup_load() -> None:
 def ask(req: AskRequest) -> dict:
     answer = AGENT(req.question)
     return {"answer": str(answer)}
+
+
+@app.options("/ask")
+def ask_options() -> dict:
+    return {"status": "ok"}
