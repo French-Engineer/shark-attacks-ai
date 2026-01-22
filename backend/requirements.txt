@@ -3,4 +3,4 @@ uvicorn
 pandas
 openpyxl
 boto3
-strands
+strands-agents
