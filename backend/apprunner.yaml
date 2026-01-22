@@ -9,3 +9,6 @@ run:
   command: /bin/sh start.sh
   network:
     port: 8080
+  env:
+    - name: SHARK_ATTACKS_DATA
+      value: "s3://shark.attack.2025/shark_attacks.2026_v2.xlsx"
