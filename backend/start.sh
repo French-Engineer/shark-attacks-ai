@@ -1,0 +1,3 @@
+#!/bin/sh
+export PYTHONPATH=/app/backend/.packages
+exec python3 -m uvicorn main:app --host 0.0.0.0 --port 8080

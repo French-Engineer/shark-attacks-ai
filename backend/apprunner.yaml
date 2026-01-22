@@ -4,7 +4,8 @@ build:
   commands:
     build:
       - python3 -m pip install -r requirements.txt -t /app/backend/.packages
+      - chmod +x start.sh
 run:
-  command: /bin/sh -c 'PYTHONPATH=/app/backend/.packages python3 -m uvicorn main:app --host 0.0.0.0 --port 8080'
+  command: /bin/sh start.sh
   network:
     port: 8080
