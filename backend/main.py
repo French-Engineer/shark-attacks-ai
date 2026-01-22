@@ -13,6 +13,11 @@ def health() -> dict:
     return {"status": "ok"}
 
 
+@app.get("/")
+def root() -> dict:
+    return {"status": "ok"}
+
+
 @app.post("/ask")
 def ask(req: AskRequest) -> dict:
     # Minimal stub. Replace with agent call once ready.
