@@ -3,8 +3,8 @@ runtime: python311
 build:
   commands:
     build:
-      - python3 -m pip install -r requirements.txt
+      - python3 -m pip install -r requirements.txt -t /app/backend/.packages
 run:
-  command: python3 -m uvicorn main:app --host 0.0.0.0 --port 8080
+  command: PYTHONPATH=/app/backend/.packages python3 -m uvicorn main:app --host 0.0.0.0 --port 8080
   network:
     port: 8080
