@@ -13,11 +13,14 @@ from strands import Agent, tool
 
 CANONICAL_COLUMNS = {
     "incidentyear": "Incident.year",
+    "incidentdate": "Incident.date",
+    "incidenthourofday": "Incident.hour.of.day",
     "victiminjury": "Victim.injury",
     "state": "State",
-    "sharkcommonname": "Shark.common.name",
-    "provokedunprovoked": "Provoked/unprovoked",
-    "victimactivity": "Victim.activity",
+    "victimsurvivedordead": "Victim.survived.or.dead",
+    "victimsex": "Victim.Sex",
+    "victimage": "Victim.Age",
+    "sharktype": "Shark.type",
 }
 
 
@@ -59,25 +62,34 @@ def _require_data() -> pd.DataFrame:
 def _apply_filters(
     df: pd.DataFrame,
     year: int | None = None,
+    date: str | None = None,
+    hour_of_day: str | None = None,
+    survived_or_dead: str | None = None,
     injury: str | None = None,
     state: str | None = None,
-    shark: str | None = None,
-    provoked: str | None = None,
-    activity: str | None = None,
+    sex: str | None = None,
+    age: str | None = None,
+    shark_type: str | None = None,
 ) -> pd.DataFrame:
     filters: list[tuple[str, str | int]] = []
     if year is not None:
         filters.append(("Incident.year", year))
+    if date:
+        filters.append(("Incident.date", date))
+    if hour_of_day:
+        filters.append(("Incident.hour.of.day", hour_of_day))
+    if survived_or_dead:
+        filters.append(("Victim.survived.or.dead", survived_or_dead))
     if injury:
         filters.append(("Victim.injury", injury))
     if state:
         filters.append(("State", state))
-    if shark:
-        filters.append(("Shark.common.name", shark))
-    if provoked:
-        filters.append(("Provoked/unprovoked", provoked))
-    if activity:
-        filters.append(("Victim.activity", activity))
+    if sex:
+        filters.append(("Victim.Sex", sex))
+    if age:
+        filters.append(("Victim.Age", age))
+    if shark_type:
+        filters.append(("Shark.type", shark_type))
 
     for col, value in filters:
         if col not in df.columns:
@@ -92,10 +104,10 @@ def _apply_filters(
 
 
 def _fatal_mask(df: pd.DataFrame) -> pd.Series:
-    if "Victim.injury" not in df.columns:
+    if "Victim.survived.or.dead" not in df.columns:
         return pd.Series([False] * len(df), index=df.index)
-    series = df["Victim.injury"].astype(str)
-    return series.str.contains(r"\bfatal\b|dead|death", case=False, na=False)
+    series = df["Victim.survived.or.dead"].astype(str)
+    return series.str.contains(r"\bdead\b|fatal|deceased", case=False, na=False)
 
 
 def _format_table(rows: Iterable[dict[str, Any]]) -> str:
@@ -188,32 +200,41 @@ def dataset_overview() -> dict:
 @tool
 def count_attacks(
     year: int | None = None,
+    date: str | None = None,
+    hour_of_day: str | None = None,
+    survived_or_dead: str | None = None,
     injury: str | None = None,
     state: str | None = None,
-    shark: str | None = None,
-    provoked: str | None = None,
-    activity: str | None = None,
+    sex: str | None = None,
+    age: str | None = None,
+    shark_type: str | None = None,
 ) -> dict:
     """
     Count shark attacks with optional filters.
 
     Args:
         year: Incident year to match (exact).
+        date: Filter by Incident.date (substring match).
+        hour_of_day: Filter by Incident.hour.of.day (substring match).
+        survived_or_dead: Filter by Victim.survived.or.dead (substring match).
         injury: Filter by Victim.injury (substring match).
         state: Filter by State (substring match).
-        shark: Filter by Shark.common.name (substring match).
-        provoked: Filter by Provoked/unprovoked (substring match).
-        activity: Filter by Victim.activity.
+        sex: Filter by Victim.Sex (substring match).
+        age: Filter by Victim.Age (substring match).
+        shark_type: Filter by Shark.type (substring match).
     """
     df = _require_data()
     filtered = _apply_filters(
         df,
         year=year,
+        date=date,
+        hour_of_day=hour_of_day,
+        survived_or_dead=survived_or_dead,
         injury=injury,
         state=state,
-        shark=shark,
-        provoked=provoked,
-        activity=activity,
+        sex=sex,
+        age=age,
+        shark_type=shark_type,
     )
     return {
         "status": "success",
@@ -226,11 +247,14 @@ def top_values(
     column: str,
     n: int = 5,
     year: int | None = None,
+    date: str | None = None,
+    hour_of_day: str | None = None,
+    survived_or_dead: str | None = None,
     injury: str | None = None,
     state: str | None = None,
-    shark: str | None = None,
-    provoked: str | None = None,
-    activity: str | None = None,
+    sex: str | None = None,
+    age: str | None = None,
+    shark_type: str | None = None,
 ) -> dict:
     """
     Return the top N values for a column with optional filters.
@@ -239,21 +263,27 @@ def top_values(
         column: Column name to rank (e.g., Shark.common.name).
         n: Number of top values to return.
         year: Incident year to filter by.
+        date: Filter by Incident.date.
+        hour_of_day: Filter by Incident.hour.of.day.
+        survived_or_dead: Filter by Victim.survived.or.dead.
         injury: Filter by Victim.injury.
         state: Filter by State.
-        shark: Filter by Shark.common.name.
-        provoked: Filter by Provoked/unprovoked.
-        activity: Filter by Victim.activity.
+        sex: Filter by Victim.Sex.
+        age: Filter by Victim.Age.
+        shark_type: Filter by Shark.type.
     """
     df = _require_data()
     filtered = _apply_filters(
         df,
         year=year,
+        date=date,
+        hour_of_day=hour_of_day,
+        survived_or_dead=survived_or_dead,
         injury=injury,
         state=state,
-        shark=shark,
-        provoked=provoked,
-        activity=activity,
+        sex=sex,
+        age=age,
+        shark_type=shark_type,
     )
     if column not in filtered.columns:
         raise ValueError(f"Column not found: {column}")
@@ -268,10 +298,12 @@ def fatality_rate_by(
     column: str,
     min_count: int = 5,
     year: int | None = None,
+    date: str | None = None,
+    hour_of_day: str | None = None,
     state: str | None = None,
-    shark: str | None = None,
-    provoked: str | None = None,
-    activity: str | None = None,
+    sex: str | None = None,
+    age: str | None = None,
+    shark_type: str | None = None,
 ) -> dict:
     """
     Compute fatality rates by a column using Victim.injury text.
@@ -280,19 +312,23 @@ def fatality_rate_by(
         column: Column to group by (e.g., Shark.common.name).
         min_count: Minimum total incidents to include a group.
         year: Incident year to filter by.
+        date: Filter by Incident.date.
+        hour_of_day: Filter by Incident.hour.of.day.
         state: Filter by State.
-        shark: Filter by Shark.common.name.
-        provoked: Filter by Provoked/unprovoked.
-        activity: Filter by Victim.activity.
+        sex: Filter by Victim.Sex.
+        age: Filter by Victim.Age.
+        shark_type: Filter by Shark.type.
     """
     df = _require_data()
     filtered = _apply_filters(
         df,
         year=year,
+        date=date,
+        hour_of_day=hour_of_day,
         state=state,
-        shark=shark,
-        provoked=provoked,
-        activity=activity,
+        sex=sex,
+        age=age,
+        shark_type=shark_type,
     )
     if column not in filtered.columns:
         raise ValueError(f"Column not found: {column}")
@@ -325,7 +361,7 @@ SYSTEM_PROMPT = (
     "Use the tools to load the Excel file and compute exact counts. "
     "Do not guess. If the dataset is not loaded, ask for the file path. "
     "When asked 'why', interpret it as patterns visible in the data "
-    "(e.g., higher counts by year, injury type, or shark species), "
+    "(e.g., higher counts by year, injury type, or shark type), "
     "and explain those patterns without claiming causation. "
     "Be concise and cite the counts you used."
 )
