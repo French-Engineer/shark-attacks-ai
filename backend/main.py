@@ -57,7 +57,8 @@ def startup_load() -> None:
 
 @app.post("/ask")
 def ask(req: AskRequest) -> dict:
-    answer = AGENT(req.question)
+    prompt = f"{req.question.strip()} (reply in a conversational manner)"
+    answer = AGENT(prompt)
     return {"answer": str(answer)}
 
 

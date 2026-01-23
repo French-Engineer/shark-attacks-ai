@@ -38,10 +38,9 @@ function App() {
     <div className="page">
       <header className="hero">
         <div className="badge">Australia · Shark Intelligence</div>
-        <h1>Shark Attacks in Australia Explained by AI</h1>
+        <h1>Shark Attacks in Australia - Explained by AI</h1>
         <p>
-          Ask questions about incidents, injuries, states, activities, and shark species. 
-          Answers are generated from Australian Shark Attack dataset (1900 to 2026, GSAF data).
+          Explore incidents, injuries, locations, activities, and shark species using verified Australian shark attack records (1900–2026).
         </p>
       </header>
 
@@ -51,7 +50,7 @@ function App() {
           id="question"
           value={question}
           onChange={(event) => setQuestion(event.target.value)}
-          placeholder="e.g., How many shark attacks were recorded in 2024?"
+          placeholder="e.g., How many shark attacks were recorded in 2025–2026? Which species are most dangerous?"
         />
         <div className="actions">
           <button onClick={ask} disabled={loading}>
