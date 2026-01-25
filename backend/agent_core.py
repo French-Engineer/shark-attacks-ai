@@ -13,6 +13,8 @@ from strands import Agent, tool
 
 CANONICAL_COLUMNS = {
     "incidentyear": "Incident.year",
+    "incidentmonth": "Incident.month",
+    "incidentday": "Incident.day",
     "incidentdate": "Incident.date",
     "incidenthourofday": "Incident.hour.of.day",
     "victiminjury": "Victim.injury",
@@ -62,6 +64,8 @@ def _require_data() -> pd.DataFrame:
 def _apply_filters(
     df: pd.DataFrame,
     year: int | None = None,
+    month: str | None = None,
+    day: str | None = None,
     date: str | None = None,
     hour_of_day: str | None = None,
     survived_or_dead: str | None = None,
@@ -74,6 +78,10 @@ def _apply_filters(
     filters: list[tuple[str, str | int]] = []
     if year is not None:
         filters.append(("Incident.year", year))
+    if month:
+        filters.append(("Incident.month", month))
+    if day:
+        filters.append(("Incident.day", day))
     if date:
         filters.append(("Incident.date", date))
     if hour_of_day:
@@ -200,6 +208,8 @@ def dataset_overview() -> dict:
 @tool
 def count_attacks(
     year: int | None = None,
+    month: str | None = None,
+    day: str | None = None,
     date: str | None = None,
     hour_of_day: str | None = None,
     survived_or_dead: str | None = None,
@@ -214,6 +224,8 @@ def count_attacks(
 
     Args:
         year: Incident year to match (exact).
+        month: Filter by Incident.month (substring match).
+        day: Filter by Incident.day (substring match).
         date: Filter by Incident.date (substring match).
         hour_of_day: Filter by Incident.hour.of.day (substring match).
         survived_or_dead: Filter by Victim.survived.or.dead (substring match).
@@ -227,6 +239,8 @@ def count_attacks(
     filtered = _apply_filters(
         df,
         year=year,
+        month=month,
+        day=day,
         date=date,
         hour_of_day=hour_of_day,
         survived_or_dead=survived_or_dead,
@@ -247,6 +261,8 @@ def top_values(
     column: str,
     n: int = 5,
     year: int | None = None,
+    month: str | None = None,
+    day: str | None = None,
     date: str | None = None,
     hour_of_day: str | None = None,
     survived_or_dead: str | None = None,
@@ -263,6 +279,8 @@ def top_values(
         column: Column name to rank (e.g., Shark.common.name).
         n: Number of top values to return.
         year: Incident year to filter by.
+        month: Filter by Incident.month.
+        day: Filter by Incident.day.
         date: Filter by Incident.date.
         hour_of_day: Filter by Incident.hour.of.day.
         survived_or_dead: Filter by Victim.survived.or.dead.
@@ -276,6 +294,8 @@ def top_values(
     filtered = _apply_filters(
         df,
         year=year,
+        month=month,
+        day=day,
         date=date,
         hour_of_day=hour_of_day,
         survived_or_dead=survived_or_dead,
@@ -298,6 +318,8 @@ def fatality_rate_by(
     column: str,
     min_count: int = 5,
     year: int | None = None,
+    month: str | None = None,
+    day: str | None = None,
     date: str | None = None,
     hour_of_day: str | None = None,
     state: str | None = None,
@@ -306,12 +328,14 @@ def fatality_rate_by(
     shark_type: str | None = None,
 ) -> dict:
     """
-    Compute fatality rates by a column using Victim.injury text.
+    Compute fatality rates by a column using Victim.survived.or.dead.
 
     Args:
         column: Column to group by (e.g., Shark.common.name).
         min_count: Minimum total incidents to include a group.
         year: Incident year to filter by.
+        month: Filter by Incident.month.
+        day: Filter by Incident.day.
         date: Filter by Incident.date.
         hour_of_day: Filter by Incident.hour.of.day.
         state: Filter by State.
@@ -323,6 +347,8 @@ def fatality_rate_by(
     filtered = _apply_filters(
         df,
         year=year,
+        month=month,
+        day=day,
         date=date,
         hour_of_day=hour_of_day,
         state=state,
